@@ -18,8 +18,9 @@ export default function GmpClient(options={}) {
     config: {
       host: 'localhost',
       port: 9390,
-      timeout: 30,  // seconds for a command to get a response before rejecting
-      onError: NOOP, // Pass a function if you want to handle errors from the TLS connection
+      timeout: 30,    // seconds for a command to get a response before rejecting
+      onError: NOOP,  // Pass a function if you want to handle errors from the TLS connection
+      xml: false,     // Pass true if you want the response to return the raw GMP XML response, otherwise will pass back JSON
       // rejectUnauthorized: true --- pass false if we don't care about security
 
       ...options
@@ -155,9 +156,10 @@ export default function GmpClient(options={}) {
             return resolveIsFinished(false)
           }
 
+          const fullXmlCopy = this.tmpAggregateResponseData
           this.tmpAggregateResponseData = ''
           this.tmpResolveReject = null
-          resolve(obj)
+          resolve((this.xml) ? fullXmlCopy : obj)
           resolveIsFinished(true)
         })
       })
